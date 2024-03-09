@@ -1,18 +1,27 @@
 <template>
-  <div class="flex flex-col md:grid grid-cols-3 gap-4 md:gap-10">
-    <div class="col-span-1">
+  <div class="flex flex-col md:items-start md:grid grid-cols-3 gap-4 md:gap-10">
+    <UCard
+      class="col-span-1"
+      :ui="{
+        rounded: 'overflow-hidden',
+        body: { padding: '' },
+        footer: { base: 'text-xs' },
+      }"
+    >
       <input v-if="!src" type="file" @change="onFileChange">
       <video
         ref="videoPreview"
-        class="rounded-lg overflow-hidden w-full"
+        class="w-full"
         :src="src || undefined"
         :title="caption"
         control
         muted
         loop
       />
-      <p>{{ caption }}</p>
-    </div>
+      <template #footer>
+        {{ caption }}
+      </template>
+    </UCard>
 
     <AuthenticityMetadata
       class="col-span-2"
