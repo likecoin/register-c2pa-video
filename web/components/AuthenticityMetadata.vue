@@ -11,12 +11,36 @@
       </template>
 
       <UTable
+        :columns="[
+          { label: '', key: 'label' },
+          { label: '', key: 'value' },
+        ]"
         :rows="[
-          { label: 'Original Recording By', value: recordedByName || 'Unknown' },
-          { label: 'Edited and Published By', value: editedByName || 'Unknown' },
-          { label: 'Transcoded By', value: transcodedByName || 'Unknown' },
-          { label: 'Fingerprint', value: fileCid },
-          { label: 'Registration Time', value: registrationTime },
+          {
+            label: 'Original Recording By',
+            value: recordedByName || 'Unknown',
+            skeletonWidth: 70,
+          },
+          {
+            label: 'Edited and Published By',
+            value: editedByName || 'Unknown',
+            skeletonWidth: 200,
+          },
+          {
+            label: 'Transcoded By',
+            value: transcodedByName || 'Unknown',
+            skeletonWidth: 280,
+          },
+          {
+            label: 'Fingerprint',
+            value: fileCid,
+            skeletonWidth: 400,
+          },
+          {
+            label: 'Registration Time',
+            value: registrationTime,
+            skeletonWidth: 160,
+          },
         ]"
         :ui="{ th: { base: 'hidden' } }"
       >
@@ -24,8 +48,11 @@
           <span class="font-bold font-mono">{{ row.label }}</span>
         </template>
         <template #value-data="{ row }">
+          <template v-if="isLoadingC2PAManifestStore">
+            <USkeleton class="h-4" :style="`width: ${row.skeletonWidth}px`" />
+          </template>
           <span
-            v-if="row.label === 'Fingerprint'"
+            v-else-if="row.label === 'Fingerprint'"
             class="text-xs font-mono"
           >{{ row.value }}</span>
           <template v-else>
@@ -225,6 +252,7 @@ import {
 const props = defineProps<{
   c2paManifestStore: ManifestStore | null,
   c2paValidationError?: string,
+  isLoadingC2PAManifestStore?: boolean,
   fileCid?: string,
   expectedFingerprint?: string,
   src?: string,

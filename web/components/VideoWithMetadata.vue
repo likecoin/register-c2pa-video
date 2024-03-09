@@ -27,6 +27,7 @@
       class="col-span-2"
       :c2paValidationError="c2paValidationError"
       :c2paManifestStore="c2paManifestStore"
+      :isLoadingC2PAManifestStore="isLoadingC2PAManifestStore"
       :fileCid="fileCid"
       :expectedFingerprint="expectedFingerprint"
       :src="src"
@@ -49,6 +50,7 @@ const props = defineProps<{
 
 const c2paValidationError = ref('')
 const c2paManifestStore = ref<ManifestStore | null>(null)
+const isLoadingC2PAManifestStore = ref(true)
 const fileCid = ref('')
 const videoPreview = ref<HTMLVideoElement | null>(null)
 const srcBlob = ref<Blob | null>(null)
@@ -102,6 +104,7 @@ async function readFileCid(file: File) {
 
 async function readC2pa(file: File | Blob) {
   c2paManifestStore.value = null;
+  isLoadingC2PAManifestStore.value = true;
   const c2pa = props.c2pa;
   if (!c2pa) return;
   try {
@@ -115,6 +118,8 @@ async function readC2pa(file: File | Blob) {
     c2paManifestStore.value = manifestStore;
   } catch (err) {
     console.error('Error reading image:', err);
+  } finally {
+    isLoadingC2PAManifestStore.value = false;
   }
 }
 
