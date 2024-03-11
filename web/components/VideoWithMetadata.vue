@@ -27,7 +27,7 @@
       class="col-span-2"
       :c2paValidationError="c2paValidationError"
       :c2paManifestStore="c2paManifestStore"
-      :isLoadingC2PAManifestStore="isLoadingC2PAManifestStore"
+      :isLoading="isLoading"
       :fileCid="fileCid"
       :expectedFingerprint="expectedFingerprint"
       :src="src"
@@ -51,6 +51,7 @@ const props = defineProps<{
 const c2paValidationError = ref('')
 const c2paManifestStore = ref<ManifestStore | null>(null)
 const isLoadingC2PAManifestStore = ref(true)
+const isFetchingURLData = ref(false)
 const fileCid = ref('')
 const videoPreview = ref<HTMLVideoElement | null>(null)
 const srcBlob = ref<Blob | null>(null)
@@ -71,6 +72,8 @@ watch(() => props.c2pa, async (c2pa) => {
   }
 })
 
+const isLoading = computed(() => isFetchingURLData.value || isLoadingC2PAManifestStore.value)
+
 onMounted(() => {
   if (props.src) {
     videoPreview.value?.play()
@@ -79,9 +82,11 @@ onMounted(() => {
 })
 
 async function readURLAsBlob(url: string) {
+  isFetchingURLData.value = true
   const { data, error } = await useFetch(url, {
     responseType: 'blob'
   });
+  isFetchingURLData.value = false
   if (error.value) throw error.value
   const blob = data.value as Blob
   srcBlob.value = blob

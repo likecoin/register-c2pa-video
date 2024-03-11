@@ -48,7 +48,7 @@
           <span class="font-bold font-mono">{{ row.label }}</span>
         </template>
         <template #value-data="{ row }">
-          <template v-if="isLoadingC2PAManifestStore">
+          <template v-if="isLoading">
             <USkeleton class="h-4" :style="`width: ${row.skeletonWidth}px`" />
           </template>
           <span
@@ -93,7 +93,7 @@
         <li class="space-y-2">
           <h3 class="flex items-center text-lg font-bold gap-2 font-mono text-gray-200">
             C2PA
-            <USkeleton v-if="isLoadingC2PAManifestStore" class="h-4 w-20" />
+            <USkeleton v-if="isLoading" class="h-4 w-20" />
             <UBadge
               v-else-if="c2paValidationError"
               color="red"
@@ -115,7 +115,7 @@
           </h3>
 
           <div class="min-h-8">
-            <div v-if="isLoadingC2PAManifestStore" class="flex items-center flex-wrap gap-4">
+            <div v-if="isLoading" class="flex items-center flex-wrap gap-4">
               <USkeleton class="h-8 w-40" />
               <USkeleton class="h-8 w-32" />
             </div>
@@ -155,7 +155,7 @@
         <li class="space-y-2">
           <h3 class="flex items-center text-lg font-bold gap-2 font-mono text-gray-200">
             Numbers
-            <USkeleton v-if="isLoadingC2PAManifestStore" class="h-4 w-20" />
+            <USkeleton v-if="isLoading" class="h-4 w-20" />
             <UBadge
               v-else-if="expectedFingerprint && expectedFingerprint !== fileCid"
               color="red"
@@ -177,7 +177,7 @@
           </h3>
 
           <div class="min-h-8">
-            <div v-if="isLoadingC2PAManifestStore" class="flex items-center flex-wrap gap-4">
+            <div v-if="isLoading" class="flex items-center flex-wrap gap-4">
               <USkeleton class="h-8 w-40" />
               <USkeleton class="h-8 w-32" />
             </div>
@@ -270,7 +270,7 @@ import {
 const props = defineProps<{
   c2paManifestStore: ManifestStore | null,
   c2paValidationError?: string,
-  isLoadingC2PAManifestStore?: boolean,
+  isLoading?: boolean,
   fileCid?: string,
   expectedFingerprint?: string,
   src?: string,
