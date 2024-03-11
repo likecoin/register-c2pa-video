@@ -67,6 +67,7 @@
           icon="i-heroicons-arrow-top-right-on-square-16-solid"
           label="IPFS"
           :to="`https://ipfs.io/ipfs/${fileCid}`"
+          :loading="!fileCid"
           variant="outline"
           rel="noopener"
           target="_blank"
@@ -75,6 +76,7 @@
           icon="i-heroicons-arrow-top-right-on-square-16-solid"
           label="Storj"
           :to="src"
+          :loading="!src"
           variant="outline"
           rel="noopener"
           target="_blank"
@@ -91,8 +93,9 @@
         <li class="space-y-2">
           <h3 class="flex items-center text-lg font-bold gap-2 font-mono text-gray-200">
             C2PA
+            <USkeleton v-if="isLoadingC2PAManifestStore" class="h-4 w-20" />
             <UBadge
-              v-if="c2paValidationError"
+              v-else-if="c2paValidationError"
               color="red"
               variant="subtle"
               :ui="{ rounded: 'rounded-full' }"
@@ -111,42 +114,50 @@
             >Missing C2PA Data</UBadge>
           </h3>
 
-          <UAlert v-if="c2paValidationError"
-            class="font-mono"
-            icon="i-heroicons-exclamation-triangle-16-solid"
-            title="Invalid"
-            :description="c2paValidationError"
-            color="red"
-            variant="subtle"
-          />
-
-          <div
-            v-else-if="c2paActiveManifest"
-            class="flex items-center gap-4"
-          >
-            <UButton
-              v-if="verificationSrc"
-              icon="i-heroicons-arrow-top-right-on-square-16-solid"
-              label="View Verification"
-              :to="verificationSrc"
-              variant="outline"
-              rel="noopener"
-              target="_blank"
+          <div class="min-h-8">
+            <div v-if="isLoadingC2PAManifestStore" class="flex items-center flex-wrap gap-4">
+              <USkeleton class="h-8 w-40" />
+              <USkeleton class="h-8 w-32" />
+            </div>
+  
+            <UAlert v-else-if="c2paValidationError"
+              class="font-mono"
+              icon="i-heroicons-exclamation-triangle-16-solid"
+              title="Invalid"
+              :description="c2paValidationError"
+              color="red"
+              variant="subtle"
             />
-
-            <UButton
-              label="View Raw Data"
-              variant="outline"
-              @click="showC2paManifestStore = !showC2paManifestStore"
-            />
+  
+            <div
+              v-else-if="c2paActiveManifest"
+              class="flex items-center flex-wrap gap-4"
+            >
+              <UButton
+                v-if="verificationSrc"
+                icon="i-heroicons-arrow-top-right-on-square-16-solid"
+                label="View Verification"
+                :to="verificationSrc"
+                variant="outline"
+                rel="noopener"
+                target="_blank"
+              />
+  
+              <UButton
+                label="View Raw Data"
+                variant="outline"
+                @click="showC2paManifestStore = !showC2paManifestStore"
+              />
+            </div>
           </div>
         </li>
 
         <li class="space-y-2">
           <h3 class="flex items-center text-lg font-bold gap-2 font-mono text-gray-200">
             Numbers
+            <USkeleton v-if="isLoadingC2PAManifestStore" class="h-4 w-20" />
             <UBadge
-              v-if="expectedFingerprint && expectedFingerprint !== fileCid"
+              v-else-if="expectedFingerprint && expectedFingerprint !== fileCid"
               color="red"
               variant="subtle"
               :ui="{ rounded: 'rounded-full' }"
@@ -165,33 +176,40 @@
             >Missing Numbers Registration</UBadge>
           </h3>
 
-          <UAlert
-            v-if="expectedFingerprint && expectedFingerprint !== fileCid"
-            class="font-mono"
-            icon="i-heroicons-exclamation-triangle-16-solid"
-            title="Invalid"
-            description="Expected fingerprint does not match file fingerprint"
-            color="red"
-            variant="subtle"
-          />
-
-          <div
-            v-else-if="numbersMetadata"
-            class="flex items-center flex-wrap gap-4"
-          >
-            <UButton
-              label="View on Numbers"
-              icon="i-heroicons-arrow-top-right-on-square-16-solid"
-              :to="`https://verify.numbersprotocol.io/?nid=${fileCid}`"
-              variant="outline"
-              target="_blank"
-              rel="noopener"
+          <div class="min-h-8">
+            <div v-if="isLoadingC2PAManifestStore" class="flex items-center flex-wrap gap-4">
+              <USkeleton class="h-8 w-40" />
+              <USkeleton class="h-8 w-32" />
+            </div>
+  
+            <UAlert
+              v-else-if="expectedFingerprint && expectedFingerprint !== fileCid"
+              class="font-mono"
+              icon="i-heroicons-exclamation-triangle-16-solid"
+              title="Invalid"
+              description="Expected fingerprint does not match file fingerprint"
+              color="red"
+              variant="subtle"
             />
-            <UButton
-              label="View Raw Data"
-              variant="outline"
-              @click="showNumbersMetadata = !showNumbersMetadata"
-            />
+  
+            <div
+              v-else-if="numbersMetadata"
+              class="flex items-center flex-wrap gap-4"
+            >
+              <UButton
+                label="View on Numbers"
+                icon="i-heroicons-arrow-top-right-on-square-16-solid"
+                :to="`https://verify.numbersprotocol.io/?nid=${fileCid}`"
+                variant="outline"
+                target="_blank"
+                rel="noopener"
+              />
+              <UButton
+                label="View Raw Data"
+                variant="outline"
+                @click="showNumbersMetadata = !showNumbersMetadata"
+              />
+            </div>
           </div>
         </li>
       </ul>
